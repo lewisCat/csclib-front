@@ -1,6 +1,6 @@
 <template>
   <!--模板区域-->
-  <div class="login-page" v-loading="isLoading">
+  <div class="login-page" v-loading="isLoad">
     <div class="login-top-log" />
     <div class="login-main">
       <div class="login-main-is-top">
@@ -8,7 +8,7 @@
       </div>
       <div class="login-input">
         <el-input
-          v-model="regName"
+          v-model="logUser.sysname"
           placeholder="请输入系统登录名称"
           suffix-icon="el-icon-user"
           clearable
@@ -16,7 +16,7 @@
         ></el-input>
         <p />
         <el-input
-          v-model="logPwd"
+          v-model="logUser.syspwd"
           type="password"
           placeholder="请输入系统登录密码"
           suffix-icon="el-icon-lock"
@@ -28,7 +28,6 @@
         <el-input
           v-model="inputIdentifyCode"
           placeholder="请输入验证码"
-          size="normal"
           clearable
           style="width: 190px"
           suffix-icon="el-icon-more"
@@ -59,53 +58,69 @@
   </div>
 </template>
 
+
 <script lang="ts">
 import { ElMessage } from "element-plus";
-import { defineComponent, reactive, ref } from "vue";
-import Sidentify from "../components/SIdentify.vue";
+import { computed, defineComponent, reactive, ref } from "vue";
+import Sidentify from "@/components/SIdentify.vue";
+import request from "@/plugins/request";
+import { sysUser } from "@/model";
+import { useStore } from "vuex";
+import { useRouter, RouteLocationRaw } from "vue-router";
 
-//组件构建
 export default defineComponent({
   name: "login",
   components: { Sidentify },
   setup() {
-    // status
-    let regName = ref("");
-    let logPwd = ref("");
-    let isLoading = ref(false);
-    let identifyCode = ref("");
-    let inputIdentifyCode = ref("");
+    const logUser: sysUser = reactive({
+      sysname: "",
+      syspwd: "",
+    });
+    const store = useStore();
+    const identifyCode = ref("");
+    const inputIdentifyCode = ref("");
+    const isLoad = computed(() => store.state.isLoad);
+    const router = useRouter();
 
-    // 函数事件
+    // 登录验证事件
     function login() {
-      let temp = inputIdentifyCode.value.toLocaleUpperCase();
-      console.log(temp);
-      console.log(identifyCode.value);
+      store.commit("setIsLoad");
+      const temp = inputIdentifyCode.value.toLocaleUpperCase();
       if (temp !== identifyCode.value) {
         ElMessage.error("验证码不正确，请重新输入验证码!");
+        store.commit("handleIsLoad", !isLoad);
       } else {
-        isLoading.value = true;
-        ElMessage.info("系统正在建设当中");
-        setTimeout(() => {
-          isLoading.value = false;
-        }, 1500);
+        //用户登录验证
+        request.post("/sysuser/login", logUser).then((res) => {
+          if (res.data.id) {
+            console.log(res);
+            ElMessage.info("用户登录成功!");
+            logUser.id = res.data.id;
+            logUser.sysname = res.data.sysname;
+            store.commit("HandleToken", logUser);
+            store.commit("handleIsLoad", !isLoad);
+            router.push("/workbench");
+          } else {
+            ElMessage.error("用户名或密码错误，请重新输入!");
+            store.commit("handleIsLoad", !isLoad);
+          }
+        });
       }
     }
 
-    // 清除验证码输入框
+    // 清除input
     function clearInput() {
       ElMessage("登录信息重置");
-      regName.value = "";
-      logPwd.value = "";
-      inputIdentifyCode.value = "";
+      logUser.sysname = "";
+      logUser.syspwd = "";
     }
+
     return {
       identifyCode,
-      regName,
-      logPwd,
+      logUser,
       login,
       clearInput,
-      isLoading,
+      isLoad,
       inputIdentifyCode,
     };
   },
