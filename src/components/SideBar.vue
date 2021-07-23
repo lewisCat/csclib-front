@@ -24,7 +24,7 @@
 import { defineComponent, computed, onMounted, reactive } from "vue";
 import { useRoute } from "vue-router";
 import { useStore } from "vuex";
-import menus from "@/plugins/menus";
+import items from "@/plugins/menus";
 
 export default defineComponent({
   name: "SideBar",
@@ -36,14 +36,12 @@ export default defineComponent({
     const onRoutes = computed(() => {
       return route.path;
     });
-
-    const items = reactive(menus);
+    
 
     onMounted(() => {
-      debugger;
-      const roleid = store.state.token.roleid;
+      const roleid = store.state.roleid;
       console.log(roleid);
-      if (roleid > 0) {
+      if (roleid != 0) {
         items.pop();
       }
     });
@@ -51,7 +49,6 @@ export default defineComponent({
     return {
       collapse,
       items,
-
       onRoutes,
     };
   },

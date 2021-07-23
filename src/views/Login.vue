@@ -96,11 +96,9 @@ export default defineComponent({
             syspwd: logPwd.value,
           })
           .then((res) => {
-            const data = res.data;
-            if (data.id) {
+            if (res.data.id) {
               ElMessage.info("用户登录成功!");
-
-              store.commit("HandleToken", data);
+              store.commit("HandleToken", res.data);
               store.commit("handleIsLoad", !isLoad);
               router.push("/workbench");
             } else {

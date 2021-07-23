@@ -22,8 +22,8 @@ const router = createRouter({
 
 //登录验证跳转
 router.beforeEach((to, fromm, next) => {
-	const token = store.state.token;
-	if (!token.id && to.path != "/") {
+	const id = store.state.id;
+	if (!id && to.path != "/") {
 		next("/");
 	} else {
 		next();

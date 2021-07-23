@@ -10,7 +10,7 @@
     <div class="use-info">
       <span>欢迎您：</span>
       <el-dropdown>
-        <span>{{ token.name }} </span>
+        <span>{{ logName }} </span>
         <template #dropdown>
           <el-dropdown-menu>
             <!-- 补个人中心业务 -->
@@ -34,23 +34,23 @@ export default defineComponent({
   setup() {
     const store = useStore();
     const collapse = computed(() => store.state.collapse);
-    const token = computed(() => store.state.token);
+    const logName = computed(() => store.state.name);
     const router = useRouter();
     const collapseChage = () => {
       store.commit("handleCollapse", !collapse.value);
     };
 
     const exit = () => {
-      store.state.token.id = undefined;
-      store.state.token.name = undefined;
-      store.state.token.roleid = undefined;
-      
+      store.state.token.id = null;
+      store.state.token.name = null;
+      store.state.token.roleid = null;
+      sessionStorage.clear();
       router.replace("/");
     };
 
     return {
       // 属性
-      token,
+      logName,
       store,
       collapse,
       collapseChage,
