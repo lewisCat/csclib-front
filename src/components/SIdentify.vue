@@ -19,7 +19,7 @@ export default defineComponent({
     identifyCodes: {
       //验证码从该字段中抽取生成
       type: String,
-      default: "1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+      default: "123456789ABCDEFGHIJKLMNPQRSTUVWXYZ",
     },
     fontSizeMin: {
       // 字体最小值

@@ -1,13 +1,14 @@
 import { createStore } from "vuex";
-import { sysUser } from "../model";
+import { sysuser } from "../model";
 import createVuexAlong from "vuex-along";
 
 export default createStore({
 	state: {
 		// 系统用户登录token，用于保存登录状态
 		token: {
-			id: <string | undefined>undefined,
-			name: <string | undefined>undefined,
+			id: <string | null>null,
+			name: <string | null>null,
+			roleid: <number | null>null,
 		},
 		//全局加载等待变量
 		isLoad: false,
@@ -15,9 +16,10 @@ export default createStore({
 	},
 
 	mutations: {
-		HandleToken(state, data: sysUser) {
+		HandleToken(state, data: sysuser) {
 			state.token.id = data.id;
 			state.token.name = data.sysname;
+			state.token.roleid = data.roleid;
 		},
 		//全局加载等待变量
 		handleIsLoad(state, data) {
@@ -28,10 +30,5 @@ export default createStore({
 		},
 	},
 
-	plugins: [
-		createVuexAlong({
-			name: "csclib-vuex",
-			local: false,
-		}),
-	],
+	plugins: [createVuexAlong({})],
 });

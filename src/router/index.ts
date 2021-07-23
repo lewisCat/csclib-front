@@ -1,3 +1,4 @@
+import { debug } from "console";
 import { createRouter, RouteRecordRaw, createWebHistory } from "vue-router";
 import store from "../store";
 
@@ -20,12 +21,13 @@ const router = createRouter({
 });
 
 //登录验证跳转
-// router.beforeEach((to, fromm, next) => {
-// 	if (store.state.token == "" && to.path != "/") {
-// 		next({ name: "Login" });
-// 	} else {
-// 		next();
-// 	}
-// });
+router.beforeEach((to, fromm, next) => {
+	const token = store.state.token;
+	if (!token.id && to.path != "/") {
+		next("/");
+	} else {
+		next();
+	}
+});
 
 export default router;

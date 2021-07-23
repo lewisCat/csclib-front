@@ -1,6 +1,5 @@
 <template>
-  <!--模板区域-->
-  <div id="header">
+  <div class="header">
     <!-- 按钮展开收回菜单 -->
     <div class="colapse-btn" @click="collapseChage">
       <i v-if="!collapse" class="el-icon-s-fold"></i>
@@ -14,6 +13,7 @@
         <span>{{ token.name }} </span>
         <template #dropdown>
           <el-dropdown-menu>
+            <!-- 补个人中心业务 -->
             <el-dropdown-item>个人中心</el-dropdown-item>
             <el-dropdown-item @click="exit">退出登录</el-dropdown-item>
           </el-dropdown-menu>
@@ -29,7 +29,7 @@ import { useRouter } from "vue-router";
 import { useStore } from "vuex";
 
 export default defineComponent({
-  name: "header",
+  name: "vHeader",
 
   setup() {
     const store = useStore();
@@ -43,6 +43,7 @@ export default defineComponent({
     const exit = () => {
       store.state.token.id = undefined;
       store.state.token.name = undefined;
+      store.state.token.roleid = undefined;
       router.replace("/");
     };
 
@@ -61,7 +62,6 @@ export default defineComponent({
 
 <style scoped>
 /*style....*/
-
 .header {
   position: relative;
   box-sizing: border-box;

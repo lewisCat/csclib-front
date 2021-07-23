@@ -1,11 +1,18 @@
 /* 系统用户表model */
-export interface sysUser {
+export interface sysuser {
 	id?: string;
-	sysname?: string;
-	syspwd?: string;
-	roleid?: number;
-	gtmCreate?: string;
-	gtmModify?: string;
-	version?: number;
-	deleted?: number;
+	sysname?: string | null;
+	syspwd?: string | null;
+	roleid?: string | null;
+	gtmCreate?: string | null;
+	gtmModify?: string | null;
+	version?: number | null;
+	deleted?: number | null;
+}
+
+export interface menu {
+	icon: string;
+	index: string;
+	title: string;
+	role: number;
 }

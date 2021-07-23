@@ -31,6 +31,7 @@
           clearable
           style="width: 190px"
           suffix-icon="el-icon-more"
+          @keyup.enter="login"
         ></el-input>
         <sidentify
           v-model:changeCode.sync="identifyCode"
@@ -64,7 +65,7 @@ import { ElMessage } from "element-plus";
 import { computed, defineComponent, reactive, ref } from "vue";
 import Sidentify from "@/components/SIdentify.vue";
 import request from "@/plugins/request";
-import { sysUser } from "@/model";
+import { sysuser } from "@/model";
 import { useStore } from "vuex";
 import { useRouter, RouteLocationRaw } from "vue-router";
 
@@ -72,7 +73,7 @@ export default defineComponent({
   name: "login",
   components: { Sidentify },
   setup() {
-    const logUser: sysUser = reactive({
+    const logUser: sysuser = reactive({
       sysname: "",
       syspwd: "",
     });
@@ -84,7 +85,7 @@ export default defineComponent({
 
     // 登录验证事件
     function login() {
-      store.commit("setIsLoad");
+      store.commit("handleIsLoad", !isLoad);
       const temp = inputIdentifyCode.value.toLocaleUpperCase();
       if (temp !== identifyCode.value) {
         ElMessage.error("验证码不正确，请重新输入验证码!");
@@ -93,10 +94,9 @@ export default defineComponent({
         //用户登录验证
         request.post("/sysuser/login", logUser).then((res) => {
           if (res.data.id) {
-            console.log(res);
             ElMessage.info("用户登录成功!");
             logUser.id = res.data.id;
-            logUser.sysname = res.data.sysname;
+            logUser.roleid = res.data.roleid;
             store.commit("HandleToken", logUser);
             store.commit("handleIsLoad", !isLoad);
             router.push("/workbench");
