@@ -40,10 +40,11 @@ export default defineComponent({
     const items = reactive(menus);
 
     onMounted(() => {
+      debugger;
       const roleid = store.state.token.roleid;
+      console.log(roleid);
       if (roleid > 0) {
-        menus.pop();
-        console.log(menus);
+        items.pop();
       }
     });
 

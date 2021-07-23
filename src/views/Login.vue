@@ -8,7 +8,7 @@
       </div>
       <div class="login-input">
         <el-input
-          v-model="logUser.sysname"
+          v-model="logName"
           placeholder="请输入系统登录名称"
           suffix-icon="el-icon-user"
           clearable
@@ -16,7 +16,7 @@
         ></el-input>
         <p />
         <el-input
-          v-model="logUser.syspwd"
+          v-model="logPwd"
           type="password"
           placeholder="请输入系统登录密码"
           suffix-icon="el-icon-lock"
@@ -73,10 +73,8 @@ export default defineComponent({
   name: "login",
   components: { Sidentify },
   setup() {
-    const logUser: sysuser = reactive({
-      sysname: "",
-      syspwd: "",
-    });
+    const logName = ref("");
+    const logPwd = ref("");
     const store = useStore();
     const identifyCode = ref("");
     const inputIdentifyCode = ref("");
@@ -92,32 +90,38 @@ export default defineComponent({
         store.commit("handleIsLoad", !isLoad);
       } else {
         //用户登录验证
-        request.post("/sysuser/login", logUser).then((res) => {
-          if (res.data.id) {
-            ElMessage.info("用户登录成功!");
-            logUser.id = res.data.id;
-            logUser.roleid = res.data.roleid;
-            store.commit("HandleToken", logUser);
-            store.commit("handleIsLoad", !isLoad);
-            router.push("/workbench");
-          } else {
-            ElMessage.error("用户名或密码错误，请重新输入!");
-            store.commit("handleIsLoad", !isLoad);
-          }
-        });
+        request
+          .post("/sysuser/login", {
+            sysname: logName.value,
+            syspwd: logPwd.value,
+          })
+          .then((res) => {
+            const data = res.data;
+            if (data.id) {
+              ElMessage.info("用户登录成功!");
+
+              store.commit("HandleToken", data);
+              store.commit("handleIsLoad", !isLoad);
+              router.push("/workbench");
+            } else {
+              ElMessage.error("用户名或密码错误，请重新输入!");
+              store.commit("handleIsLoad", !isLoad);
+            }
+          });
       }
     }
 
     // 清除input
     function clearInput() {
       ElMessage("登录信息重置");
-      logUser.sysname = "";
-      logUser.syspwd = "";
+      logName.value = "";
+      logPwd.value = "";
     }
 
     return {
       identifyCode,
-      logUser,
+      logName,
+      logPwd,
       login,
       clearInput,
       isLoad,

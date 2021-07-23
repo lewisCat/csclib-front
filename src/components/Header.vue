@@ -44,6 +44,7 @@ export default defineComponent({
       store.state.token.id = undefined;
       store.state.token.name = undefined;
       store.state.token.roleid = undefined;
+      
       router.replace("/");
     };
 

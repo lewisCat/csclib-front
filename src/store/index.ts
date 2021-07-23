@@ -1,6 +1,6 @@
 import { createStore } from "vuex";
-import { sysuser } from "../model";
 import createVuexAlong from "vuex-along";
+import { sysuser } from "../model";
 
 export default createStore({
 	state: {
@@ -30,5 +30,9 @@ export default createStore({
 		},
 	},
 
-	plugins: [createVuexAlong({})],
+	plugins: [
+		createVuexAlong({
+			justSession: true,
+		}),
+	],
 });

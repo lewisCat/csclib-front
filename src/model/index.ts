@@ -1,9 +1,9 @@
 /* 系统用户表model */
 export interface sysuser {
-	id?: string;
-	sysname?: string | null;
+	id: string;
+	sysname: string;
 	syspwd?: string | null;
-	roleid?: string | null;
+	roleid: number;
 	gtmCreate?: string | null;
 	gtmModify?: string | null;
 	version?: number | null;
