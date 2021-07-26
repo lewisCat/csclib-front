@@ -11,11 +11,14 @@ const routes: Array<RouteRecordRaw> = [
 	{
 		path: "/workbench",
 		name: "WorkBench",
+		meta: { title: "系统首页" },
 		component: () => import("../views/WorkBench.vue"),
 	},
 ];
 
 const router = createRouter({
+
+
 	history: createWebHistory(),
 	routes,
 });

@@ -10,9 +10,3 @@ export interface sysuser {
 	deleted?: number | null;
 }
 
-export interface menu {
-	icon: string;
-	index: string;
-	title: string;
-	role: number;
-}

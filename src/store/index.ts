@@ -11,11 +11,14 @@ export default createStore({
 
 		//全局加载等待变量
 		isLoad: false,
+		// 工作台页面侧边导航缩放
 		collapse: false,
+		//导航栏目数据
+		tagsList: [],
 	},
 
 	mutations: {
-		HandleToken(state, data: sysuser) {
+		setToken(state, data: sysuser) {
 			state.id = data.id;
 			state.name = data.sysname;
 			state.roleid = data.roleid;
@@ -27,11 +30,28 @@ export default createStore({
 		handleCollapse(state, data) {
 			state.collapse = data;
 		},
+
+		// 设置标签
+		setTagsItem(state, data) {
+			state.tagsList.push(data);
+		},
+
+		//清空标签
+		clearTags(state) {
+			state.tagsList = [];
+		},
+
+		closeTagsOther(state, data) {
+			state.tagsList = data;
+		},
+
+		delTagsItem(state, data) {
+            state
+                .tagsList
+                .splice(data.index, 1);
+        },
+
 	},
 
-	plugins: [
-		createVuexAlong({
-			justSession: true,
-		}),
-	],
+	plugins: [createVuexAlong()],
 });
