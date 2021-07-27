@@ -11,7 +11,7 @@
 		<div class="container">
 			<!-- 操作区域 -->
 			<div class="operation-region">
-				<el-button type="primary" size="small" @click="showAddUser = true"
+				<el-button type="primary" size="small" @click="addNewUser"
 					>新增用户</el-button
 				>
 			</div>
@@ -93,7 +93,7 @@ export default defineComponent({
 		});
 
 		const userlist = reactive([]);
-		const showAddUser = ref(false); //新增用户界面
+		const showAddUser = ref(false); //新增用户界面控制
 
 		//加载获取全部系统用户
 		onBeforeMount(() => {
@@ -105,6 +105,11 @@ export default defineComponent({
 			});
 		});
 
+		const addNewUser = () => {
+			showAddUser.value = true;
+			newUser.name = "";
+			newUser.password = "";
+		};
 		const handleEdit = (index, row) => {
 			console.log(index);
 			console.log(row.id);
@@ -119,6 +124,14 @@ export default defineComponent({
 		const validatName = (rule, value, callback) => {
 			if (value === "") {
 				callback("请输入用户名称");
+			} else {
+				request
+					.get("/sysuser/query", { params: { userName: newUser.name } })
+					.then((res) => {
+						if (res.data.id) {
+							callback("用户名已存在!请更换用户名...");
+						}
+					});
 			}
 		};
 
@@ -136,6 +149,7 @@ export default defineComponent({
 			newUser,
 			showAddUser,
 
+			addNewUser,
 			rules,
 			handleEdit,
 			handleDelete,

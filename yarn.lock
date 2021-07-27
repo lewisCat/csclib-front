@@ -45,7 +45,7 @@
   dependencies:
     "@types/lodash" "*"
 
-"@types/lodash@*", "@types/lodash@^4.14.161":
+"@types/lodash@*":
   version "4.14.171"
   resolved "https://registry.nlark.com/@types/lodash/download/@types/lodash-4.14.171.tgz?cache=0&sync_timestamp=1625609589008&other_urls=https%3A%2F%2Fregistry.nlark.com%2F%40types%2Flodash%2Fdownload%2F%40types%2Flodash-4.14.171.tgz#f01b3a5fe3499e34b622c362a46a609fdb23573b"
   integrity sha1-8Bs6X+NJnjS2IsNipGpgn9sjVzs=
@@ -324,13 +324,12 @@ duplexer2@~0.1.4:
   dependencies:
     readable-stream "^2.0.2"
 
-element-plus@1.0.2-beta.54:
-  version "1.0.2-beta.54"
-  resolved "https://registry.nlark.com/element-plus/download/element-plus-1.0.2-beta.54.tgz?cache=0&sync_timestamp=1627364946600&other_urls=https%3A%2F%2Fregistry.nlark.com%2Felement-plus%2Fdownload%2Felement-plus-1.0.2-beta.54.tgz#70eda3fc0ef4c28a1cdc6bffec8f9c34ef83cc16"
-  integrity sha1-cO2j/A70wooc3Gv/7I+cNO+DzBY=
+element-plus@^1.0.2-beta.54:
+  version "1.0.2-beta.63"
+  resolved "https://registry.nlark.com/element-plus/download/element-plus-1.0.2-beta.63.tgz#f2faf1456d8b597e1f9b88daaea2fb412d2fe675"
+  integrity sha1-8vrxRW2LWX4fm4jarqL7QS0v5nU=
   dependencies:
     "@popperjs/core" "^2.4.4"
-    "@types/lodash" "^4.14.161"
     async-validator "^3.4.0"
     dayjs "1.x"
     lodash "^4.17.20"

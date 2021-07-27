@@ -1,6 +1,5 @@
 import { createStore } from "vuex";
 import createVuexAlong from "vuex-along";
-import { sysuser } from "../model";
 
 export default createStore({
 	state: {
