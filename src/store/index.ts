@@ -5,10 +5,7 @@ import { sysuser } from "../model";
 export default createStore({
 	state: {
 		// 系统用户登录token，用于保存登录状态
-		id: <string | null>null,
-		name: <string | null>null,
-		roleid: <number | null>null,
-
+		token: <string | null>null,
 		//全局加载等待变量
 		isLoad: false,
 		// 工作台页面侧边导航缩放
@@ -18,10 +15,8 @@ export default createStore({
 	},
 
 	mutations: {
-		setToken(state, data: sysuser) {
-			state.id = data.id;
-			state.name = data.sysname;
-			state.roleid = data.roleid;
+		setToken(state, data) {
+			state.token = data;
 		},
 		//全局加载等待变量
 		handleIsLoad(state, data) {
@@ -46,11 +41,8 @@ export default createStore({
 		},
 
 		delTagsItem(state, data) {
-            state
-                .tagsList
-                .splice(data.index, 1);
-        },
-
+			state.tagsList.splice(data.index, 1);
+		},
 	},
 
 	plugins: [createVuexAlong()],

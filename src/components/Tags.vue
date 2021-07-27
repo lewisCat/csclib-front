@@ -18,7 +18,7 @@
 		<div class="tags-close-box">
 			<el-dropdown @command="handleTags">
 				<el-button size="mini" type="primary">
-					标签选项
+					标签操作
 					<i class="el-icon-arrow-down el-icon--right"></i>
 				</el-button>
 				<template #dropdown>
@@ -42,10 +42,6 @@ export default defineComponent({
 	setup() {
 		const store = useStore();
 		const route = useRoute();
-		debugger;
-		console.log(route.name);
-		console.log(route.meta.title);
-		console.log(route.fullPath);
 
 		const router = useRouter();
 		const tagsList = computed(() => store.state.tagsList);
@@ -65,7 +61,7 @@ export default defineComponent({
 			if (item) {
 				delItem.path === route.fullPath && router.push(item.path);
 			} else {
-				router.push("/");
+				router.push("/workbench");
 			}
 		};
 
@@ -93,7 +89,7 @@ export default defineComponent({
 		// 关闭全部标签
 		const closeAll = () => {
 			store.commit("clearTags");
-			router.push("/");
+			router.push("/workbench");
 		};
 
 		const handleTags = (command) => {

@@ -10,7 +10,7 @@
 		<div class="use-info">
 			<span>欢迎您：</span>
 			<el-dropdown>
-				<span>{{ logName }} </span>
+				<span>{{ username }} </span>
 				<template #dropdown>
 					<el-dropdown-menu>
 						<!-- 补个人中心业务 -->
@@ -32,10 +32,10 @@ export default defineComponent({
 	name: "vHeader",
 
 	setup() {
-		const store = useStore();
 		const collapse = computed(() => store.state.collapse);
-		const logName = computed(() => store.state.name);
+		const username = sessionStorage.getItem("username");
 		const router = useRouter();
+		const store = useStore();
 		const collapseChage = () => {
 			store.commit("handleCollapse", !collapse.value);
 		};
@@ -49,7 +49,7 @@ export default defineComponent({
 
 		return {
 			// 属性
-			logName,
+			username,
 			store,
 			collapse,
 			collapseChage,

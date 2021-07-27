@@ -26,7 +26,7 @@ import { useRoute } from "vue-router";
 import { useStore } from "vuex";
 
 export default defineComponent({
-	name: "SideBar",
+	name: "VsideBar",
 	setup() {
 		const store = useStore();
 		const route = useRoute();
@@ -60,7 +60,7 @@ export default defineComponent({
 			{
 				icon: "el-icon-setting",
 				title: "用户管理",
-				index: "#5",
+				index: "/usermg",
 				role: 0,
 			},
 		]);
@@ -72,7 +72,7 @@ export default defineComponent({
 
 		//页面挂载之前确定权限，目前仅有0:系统管理员，1:日常使用人员
 		onBeforeMount(() => {
-			const roleid = store.state.roleid;
+			const roleid = sessionStorage.getItem("roleid");
 			for (let i = 0; i < items.length; i++) {
 				if (!(roleid <= items[i].role)) {
 					items.splice(i, 1);

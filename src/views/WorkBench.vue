@@ -6,6 +6,16 @@
 		<v-sidebar />
 		<div class="content-box" :class="{ 'content-collapse': collapse }">
 			<v-tags />
+			<div class="content">
+				<router-view v-slot="{ Component }">
+					<transition name="move" mode="out-in">
+						<keep-alive :include="tagsList">
+							<component :is="Component" />
+						</keep-alive>
+					</transition>
+				</router-view>
+				<!-- <el-backtop target=".content"></el-backtop> -->
+			</div>
 		</div>
 	</div>
 </template>
@@ -27,8 +37,13 @@ export default defineComponent({
 	setup() {
 		const store = useStore();
 		const collapse = computed(() => store.state.collapse);
-
+		const tagsList = computed(() => {
+			store.state.tagsList.map((item) => {
+				item.name;
+			});
+		});
 		return {
+			tagsList,
 			collapse,
 		};
 	},
@@ -50,5 +65,13 @@ export default defineComponent({
 }
 .content-collapse {
 	left: 65px;
+}
+
+.content {
+    width: auto;
+    height: 100%;
+    padding: 10px;
+    overflow-y: scroll;
+    box-sizing: border-box;
 }
 </style>

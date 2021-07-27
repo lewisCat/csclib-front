@@ -8,6 +8,11 @@
  * Correct `block` display not defined in IE 8/9.
  */
 
+* {
+	padding: 0;
+	margin: 0;
+}
+
 article,
 aside,
 details,
@@ -23,8 +28,8 @@ summary {
 	display: block;
 }
 
-li{
-	list-style:none inside;
+li {
+	list-style: none inside;
 }
 
 /**
@@ -92,6 +97,7 @@ body {
 
 a {
 	background: transparent;
+	text-decoration: none;
 }
 
 /**
@@ -99,7 +105,8 @@ a {
  */
 
 a:focus {
-	outline: thin dotted;
+	outline-style: none;
+	-moz-outline-style: none;
 }
 
 /**
@@ -408,4 +415,26 @@ textarea {
 table {
 	border-collapse: collapse;
 	border-spacing: 0;
+}
+
+/* 工作台工作区域 */
+.container {
+	padding: 10px;
+	background: #fff;
+	border: 1px solid #ddd;
+	border-radius: 5px;
+}
+
+/* 工作区域头部标识 */
+.tags-title {
+	margin-top: 4px;
+	margin-bottom: 8px;
+}
+
+/* 工作区操作区域 */
+.operation-region {
+	width: 100%;
+	border: rgba(130, 130, 130, 0.2) solid 1px;
+	border-radius: 5px;
+	padding: 10px;
 }

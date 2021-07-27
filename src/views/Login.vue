@@ -6,53 +6,59 @@
 			<div class="login-main-is-top">
 				<span>系统登录</span>
 			</div>
-			<div class="login-input">
-				<el-input
-					v-model="logName"
-					placeholder="请输入系统登录名称"
-					suffix-icon="el-icon-user"
-					clearable
-					style="width: 300px"
-				></el-input>
-				<p />
-				<el-input
-					v-model="logPwd"
-					type="password"
-					placeholder="请输入系统登录密码"
-					suffix-icon="el-icon-lock"
-					clearable
-					style="width: 300px"
-				></el-input>
-				<p />
-				<!-- 验证码输入框 -->
-				<el-input
-					v-model="inputIdentifyCode"
-					placeholder="请输入验证码"
-					clearable
-					style="width: 190px"
-					suffix-icon="el-icon-more"
-					@keyup.enter="login"
-				></el-input>
-				<sidentify
-					v-model:changeCode.sync="identifyCode"
-					:contentHeight="40"
-					:contentWidth="100"
-					style="vertical-align: top; margin-left: 10px"
-				/>
-				<p />
-				<div class="login-button">
-					<el-button
-						type="primary"
-						@click="login"
-						style="width: 145px; font-size: 1rem"
-						>登录</el-button
-					>
-					<el-button
-						type="info"
-						@click="clearInput"
-						style="width: 145px; font-size: 1rem"
-						>重置</el-button
-					>
+			<div class="login-from">
+				<div class="login-input">
+					<el-input
+						v-model="loginuser.username"
+						placeholder="请输入系统登录名称"
+						suffix-icon="el-icon-user"
+						clearable
+						style="width: 300px"
+					></el-input>
+				</div>
+				<div class="login-input">
+					<el-input
+						v-model="loginuser.password"
+						type="password"
+						placeholder="请输入系统登录密码"
+						suffix-icon="el-icon-lock"
+						clearable
+						style="width: 300px"
+					></el-input>
+				</div>
+				<div class="login-input">
+					<!-- 验证码输入框 -->
+					<el-input
+						v-model="inputIdentifyCode"
+						placeholder="请输入验证码"
+						clearable
+						style="width: 190px"
+						suffix-icon="el-icon-more"
+						@keyup.enter="login"
+					></el-input>
+					<sidentify
+						ref="cmp_sidentify"
+						v-model:changeCode.sync="identifyCode"
+						:contentHeight="40"
+						:contentWidth="100"
+						style="vertical-align: top; margin-left: 10px"
+					/>
+				</div>
+				<div class="login-input">
+					<div class="login-button">
+						<el-button
+							type="primary"
+							@click="login"
+							style="width: 145px; font-size: 1rem"
+							>登录</el-button
+						>
+						<el-button
+							type="info"
+							@click="clearInput"
+							style="width: 145px; font-size: 1rem"
+							>重置</el-button
+						>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -72,8 +78,11 @@ export default defineComponent({
 	name: "login",
 	components: { Sidentify },
 	setup() {
-		const logName = ref("");
-		const logPwd = ref("");
+		const loginuser = reactive({
+			username: "",
+			password: "",
+		});
+		const cmp_sidentify = ref();
 		const store = useStore();
 		const identifyCode = ref("");
 		const inputIdentifyCode = ref("");
@@ -86,22 +95,26 @@ export default defineComponent({
 			const temp = inputIdentifyCode.value.toLocaleUpperCase();
 			if (temp !== identifyCode.value) {
 				ElMessage.error("验证码不正确，请重新输入验证码!");
+				cmp_sidentify.value.changeCode();
 				store.commit("handleIsLoad", !isLoad);
 			} else {
 				//用户登录验证
 				request
 					.post("/sysuser/login", {
-						sysname: logName.value,
-						syspwd: logPwd.value,
+						sysname: loginuser.username,
+						syspwd: loginuser.password,
 					})
 					.then((res) => {
 						if (res.data.id) {
 							ElMessage.info("用户登录成功!");
-							store.commit("setToken", res.data);
+							store.commit("setToken", res.data.id);
+							sessionStorage.setItem("username", loginuser.username);
+							sessionStorage.setItem("roleid", res.data.roleid);
 							store.commit("handleIsLoad", !isLoad);
 							router.push("/workbench");
 						} else {
 							ElMessage.error("用户名或密码错误，请重新输入!");
+							cmp_sidentify.value.changeCode();
 							store.commit("handleIsLoad", !isLoad);
 						}
 					});
@@ -111,14 +124,16 @@ export default defineComponent({
 		// 清除input
 		function clearInput() {
 			ElMessage("登录信息重置");
-			logName.value = "";
-			logPwd.value = "";
+			loginuser.username = "";
+			loginuser.password = "";
+			inputIdentifyCode.value = "";
+			cmp_sidentify.value.changeCode();
 		}
 
 		return {
+			cmp_sidentify,
 			identifyCode,
-			logName,
-			logPwd,
+			loginuser,
 			login,
 			clearInput,
 			isLoad,
@@ -169,13 +184,17 @@ export default defineComponent({
 	font-weight: 600;
 }
 
-.login-input {
+.login-from {
 	text-align: center;
 	margin-top: 1.5rem;
 }
-.login-input span {
+.login-from span {
 	font-size: 1.3rem;
 	letter-spacing: 0.5rem;
 	color: rgba(0, 0, 0, 0.5);
+}
+
+.login-input {
+	margin: 1rem;
 }
 </style>
