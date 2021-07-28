@@ -1,7 +1,8 @@
+/* 系统用户管理视图 */
 <template>
 	<div class="user-manager">
 		<div class="tags-title">
-			<el-breadcrumb separator="/" class="">
+			<el-breadcrumb separator="/">
 				<el-breadcrumb-item
 					><i class="el-icon-setting"></i>用户管理</el-breadcrumb-item
 				>

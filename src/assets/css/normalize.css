@@ -427,13 +427,13 @@ table {
 
 /* 工作区域头部标识 */
 .tags-title {
-	margin-top: 4px;
-	margin-bottom: 8px;
+	padding-top: 4px;
+	padding-bottom: 10px;
 }
 
 /* 工作区操作区域 */
 .operation-region {
 	border: rgba(130, 130, 130, 0.2) solid 1px;
 	border-radius: 5px;
-	padding: 10px;
+	padding: 5px;
 }

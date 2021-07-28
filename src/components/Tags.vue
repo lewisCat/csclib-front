@@ -83,10 +83,18 @@ export default defineComponent({
 		onBeforeRouteUpdate((to) => {
 			setTags(to);
 		});
+		// 关闭其他标签
+		const closeOther = () => {
+			const curItem = tagsList.value.filter((item) => {
+				return item.path === route.fullPath;
+			});
+			store.commit("closeTagsOther", curItem);
+		};
 		// 关闭全部标签
 		const closeAll = () => {
 			store.commit("clearTags");
 			router.push("/workbench");
+			// setTags(route);
 		};
 		const handleTags = (command) => {
 			command === "other" ? closeOther() : closeAll();

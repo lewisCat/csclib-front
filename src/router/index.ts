@@ -21,6 +21,18 @@ const routes: Array<RouteRecordRaw> = [
 				meta: { title: "用户管理" },
 				component: () => import("../views/UserManager.vue"),
 			},
+			{
+				path: "/certimg",
+				name: "CertiManager",
+				meta: { title: "证书管理" },
+				component: () => import("../views/CertiManager.vue"),
+			},
+			{
+				path: "/empmg",
+				name: "EmpManager",
+				meta: { title: "员工管理" },
+				component: () => import("../views/EmpManager.vue"),
+			},
 		],
 	},
 ];

@@ -42,13 +42,13 @@ export default defineComponent({
 			{
 				icon: "el-icon-user",
 				title: "员工管理",
-				index: "#2",
+				index: "/empmg",
 				role: 1,
 			},
 			{
 				icon: "el-icon-notebook-1",
 				title: "证书管理",
-				index: "#3",
+				index: "/certimg",
 				role: 1,
 			},
 			{
