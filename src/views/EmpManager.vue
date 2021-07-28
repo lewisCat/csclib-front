@@ -7,7 +7,34 @@
 				>
 			</el-breadcrumb>
 		</div>
-		<div class="container"></div>
+		<!-- 主区域 -->
+		<div class="container">
+			<!-- 操作区域 -->
+			<div class="operation-region">
+				<div class="operation-region-flex">
+					<div style="flex-grow: 0; flex-shrink: 0; width: 350px">
+						<el-input
+							v-model="searchKeyWord"
+							placeholder="输入要查找的员工姓名"
+							suffix-icon="el-icon-search"
+							size="medium"
+							clearable
+							@keydown.enter="searchEmp"
+						>
+						</el-input>
+					</div>
+					<el-button
+						type="primary"
+						size="medium"
+						round
+						@click=""
+						icon="el-icon-plus"
+						>新增员工</el-button
+					>
+				</div>
+				<!--  -->
+			</div>
+		</div>
 	</div>
 </template>
 
@@ -25,12 +52,28 @@ export default defineComponent({
 			phonenum: "",
 			entryday: "",
 			outday: "",
-      
 		});
+		const searchKeyWord = ref("");
+		const searchCondition = ref("name");
 
-		return {};
+		const searchEmp = () => {
+			alert("111");
+		};
+
+		return {
+			employe,
+			searchCondition,
+			searchKeyWord,
+
+			searchEmp,
+		};
 	},
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.operation-region-flex {
+	display: flex;
+	gap: 10px;
+}
+</style>
