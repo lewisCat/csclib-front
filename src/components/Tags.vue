@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, reactive, ref } from "vue";
+import { computed, defineComponent, onBeforeMount, reactive, ref } from "vue";
 import { onBeforeRouteUpdate, useRoute, useRouter } from "vue-router";
 import { useStore } from "vuex";
 
@@ -42,7 +42,6 @@ export default defineComponent({
 	setup() {
 		const store = useStore();
 		const route = useRoute();
-
 		const router = useRouter();
 		const tagsList = computed(() => store.state.tagsList);
 		const showTags = computed(() => tagsList.value.length > 0);
@@ -50,7 +49,6 @@ export default defineComponent({
 		const isActive = (path) => {
 			return path === route.fullPath;
 		};
-
 		// 关闭单个标签
 		const closeTags = (index) => {
 			const delItem = tagsList.value[index];
@@ -64,7 +62,6 @@ export default defineComponent({
 				router.push("/workbench");
 			}
 		};
-
 		//设置标签
 		const setTags = (route) => {
 			const isExist = tagsList.value.some((item) => {
@@ -81,21 +78,19 @@ export default defineComponent({
 				});
 			}
 		};
+		store.commit("clearTags");
 		setTags(route);
 		onBeforeRouteUpdate((to) => {
 			setTags(to);
 		});
-
 		// 关闭全部标签
 		const closeAll = () => {
 			store.commit("clearTags");
 			router.push("/workbench");
 		};
-
 		const handleTags = (command) => {
 			command === "other" ? closeOther() : closeAll();
 		};
-
 		return {
 			isActive,
 			tagsList,

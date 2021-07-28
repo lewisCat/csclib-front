@@ -1,6 +1,9 @@
+// 日期格式转换
 const dateFmt = (data) => {
-	const date = new Date(data);
-	return `${date.getFullYear()}年${date.getMonth()}月${date.getDay()}日`;
+	const outdate = new Date(Date.parse(data));
+	return `${outdate.getFullYear()}-${
+		outdate.getMonth() + 1
+	}-${outdate.getDate()}`;
 };
 
 export default dateFmt;

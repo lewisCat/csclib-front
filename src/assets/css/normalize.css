@@ -433,7 +433,6 @@ table {
 
 /* 工作区操作区域 */
 .operation-region {
-	width: 100%;
 	border: rgba(130, 130, 130, 0.2) solid 1px;
 	border-radius: 5px;
 	padding: 10px;
