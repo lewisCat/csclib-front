@@ -3,18 +3,14 @@
 	<div class="user-manager">
 		<div class="tags-title">
 			<el-breadcrumb separator="/">
-				<el-breadcrumb-item
-					><i class="el-icon-setting"></i>用户管理</el-breadcrumb-item
-				>
+				<el-breadcrumb-item><i class="el-icon-setting"></i>用户管理</el-breadcrumb-item>
 			</el-breadcrumb>
 		</div>
 
 		<div class="container">
 			<!-- 操作区域 -->
 			<div class="operation-region">
-				<el-button type="primary" size="small" @click="showDialog"
-					>新增用户</el-button
-				>
+				<el-button type="primary" size="small" @click="showDialog">新增用户</el-button>
 			</div>
 
 			<!-- 列表区域 -->
@@ -25,10 +21,7 @@
 
 				<el-table-column align="right">
 					<template #default="scope">
-						<el-button
-							type="text"
-							icon="el-icon-edit"
-							@click="handleEdit(scope.$index, scope.row)"
+						<el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)"
 							>编辑</el-button
 						>
 						<el-popconfirm
@@ -38,9 +31,7 @@
 							@confirm="handleDelete(scope.$index, scope.row)"
 						>
 							<template #reference>
-								<el-button icon="el-icon-delete" type="text" class="red"
-									>删除</el-button
-								>
+								<el-button icon="el-icon-delete" type="text" class="red">删除</el-button>
 							</template>
 						</el-popconfirm>
 					</template>
@@ -50,33 +41,15 @@
 
 		<!-- 新增用户界面-->
 		<el-dialog title="新增用户" center v-model="showAddUser" width="35%">
-			<el-form
-				ref="formRefAdduser"
-				:model="userInfo"
-				status-icon
-				:rules="rules"
-				size="small"
-			>
+			<el-form ref="formRefAdduser" :model="userInfo" status-icon :rules="rules" size="small">
 				<el-form-item label="用户名称" prop="name">
-					<el-input
-						v-model="userInfo.name"
-						autocomplete="off"
-						size="small"
-					></el-input>
+					<el-input v-model="userInfo.name" autocomplete="off" size="small"></el-input>
 				</el-form-item>
 				<el-form-item label="用户密码" prop="password">
-					<el-input
-						type="password"
-						v-model="userInfo.password"
-						show-password
-					></el-input>
+					<el-input type="password" v-model="userInfo.password" show-password></el-input>
 				</el-form-item>
 				<el-form-item label="密码确认" prop="ckpassword">
-					<el-input
-						type="password"
-						v-model="userInfo.ckpassword"
-						show-password
-					></el-input>
+					<el-input type="password" v-model="userInfo.ckpassword" show-password></el-input>
 				</el-form-item>
 				<el-form-item label="用户权限" prop="role">
 					<el-select v-model="userInfo.role" placeholder="请选择">
@@ -93,33 +66,15 @@
 
 		<!-- 修改用户信息界面 -->
 		<el-dialog title="修改用户" center v-model="showModify" width="35%">
-			<el-form
-				ref="formRefmodify"
-				:model="userInfo"
-				status-icon
-				:rules="rules"
-				size="small"
-			>
+			<el-form ref="formRefmodify" :model="userInfo" status-icon :rules="rules" size="small">
 				<el-form-item label="用户名称" prop="name">
-					<el-input
-						v-model="userInfo.name"
-						autocomplete="off"
-						size="small"
-					></el-input>
+					<el-input v-model="userInfo.name" autocomplete="off" size="small"></el-input>
 				</el-form-item>
 				<el-form-item label="用户密码" prop="password">
-					<el-input
-						type="password"
-						v-model="userInfo.password"
-						show-password
-					></el-input>
+					<el-input type="password" v-model="userInfo.password" show-password></el-input>
 				</el-form-item>
 				<el-form-item label="密码确认" prop="ckpassword">
-					<el-input
-						type="password"
-						v-model="userInfo.ckpassword"
-						show-password
-					></el-input>
+					<el-input type="password" v-model="userInfo.ckpassword" show-password></el-input>
 				</el-form-item>
 				<el-form-item label="用户权限" prop="role">
 					<el-select v-model="userInfo.role" placeholder="请选择">
@@ -166,8 +121,8 @@ export default defineComponent({
 		//获取全部用户方法封装
 		const getAllUser = () => {
 			userlist.length = 0;
-			request.get("/sysuser/list").then((res) => {
-				res.data.forEach((user) => {
+			request.get("/sysuser/list").then(res => {
+				res.data.forEach(user => {
 					user.gtmCreate = dateFmt(user.gtmCreate);
 					if (user.roleid == 0) {
 						user.roleid = "系统管理员";
@@ -206,7 +161,7 @@ export default defineComponent({
 					syspwd: userInfo.password,
 					roleid: userInfo.role,
 				})
-				.then((res) => {
+				.then(res => {
 					if (res.data) {
 						ElMessage.success("用户修改成功!");
 						getAllUser();
@@ -225,7 +180,7 @@ export default defineComponent({
 						userid: row.id,
 					},
 				})
-				.then((res) => {
+				.then(res => {
 					if (res.data) {
 						ElMessage.success("用户删除成功!");
 						userlist.splice(index, 1);
@@ -236,7 +191,7 @@ export default defineComponent({
 		};
 		//新增用户
 		const addNewUser = () => {
-			formRefAdduser.value.validate((vali) => {
+			formRefAdduser.value.validate(vali => {
 				if (vali) {
 					request
 						.post("/sysuser/add", {
@@ -244,7 +199,7 @@ export default defineComponent({
 							syspwd: userInfo.password,
 							roleid: userInfo.role,
 						})
-						.then((res) => {
+						.then(res => {
 							if (res.data) {
 								ElMessage.success("新增用户成功!");
 								getAllUser();
@@ -268,15 +223,13 @@ export default defineComponent({
 			if (value === "" || !value) {
 				callback(new Error("请输入用户名称"));
 			} else {
-				request
-					.get("/sysuser/query", { params: { userName: userInfo.name } })
-					.then((res) => {
-						if (res.data.id) {
-							callback(new Error("用户名已存在!请更换用户名..."));
-						} else {
-							callback();
-						}
-					});
+				request.get("/sysuser/query", { params: { userName: userInfo.name } }).then(res => {
+					if (res.data.id) {
+						callback(new Error("用户名已存在!请更换用户名..."));
+					} else {
+						callback();
+					}
+				});
 			}
 		};
 		// 双重密码验证
