@@ -12,7 +12,7 @@
 				<div class="operation-region-flex">
 					<div style="flex-grow: 0; flex-shrink: 0; width: 350px">
 						<el-input
-							v-model="searchKeyWord.keyWord"
+							v-model="searchKeyWord.seName"
 							placeholder="输入要查找的员工姓名"
 							suffix-icon="el-icon-search"
 							size="medium"
@@ -20,7 +20,11 @@
 						>
 						</el-input>
 					</div>
-					<el-select size="medium" v-model="searchKeyWord.company" placeholder="请选择要查询的公司">
+					<el-select
+						size="medium"
+						v-model="searchKeyWord.seCompany"
+						placeholder="请选择要查询的公司"
+					>
 						<el-option
 							v-for="item in companysinfo"
 							:key="item.value"
@@ -53,7 +57,7 @@
 							<el-button
 								type="text"
 								icon="el-icon-edit"
-								@click="addCertificate(scope.$index, scope.row)"
+								@click="addButtonCertificate(scope.$index, scope.row)"
 								>证书</el-button
 							>
 							<el-button
@@ -95,7 +99,7 @@
 				<el-form
 					:model="employe"
 					ref="addempFrom"
-					:rules="rules"
+					:rules="empRules"
 					label-width="80px"
 					:inline="false"
 					size="small"
@@ -163,7 +167,7 @@
 		<!-- 修改员工表单 -->
 		<el-dialog title="修改员工信息" center v-model="showModifyemp" width="40%">
 			<div class="add-emp-form">
-				<el-form :model="employe" :rules="rules" label-width="80px" :inline="false" size="small">
+				<el-form :model="employe" :rules="empRules" label-width="80px" :inline="false" size="small">
 					<el-form-item label="员工姓名" prop="name">
 						<el-input v-model="employe.name"></el-input>
 					</el-form-item>
@@ -235,6 +239,76 @@
 			</div>
 		</el-dialog>
 		<!--新增人员证书-->
+		<el-dialog title="新增证书" center v-model="showAddCert" width="40%">
+			<div class="add-emp-form">
+				<el-form
+					ref="certificates"
+					:model="certificato"
+					:rules="cerRules"
+					label-width="80px"
+					:inline="false"
+					size="small"
+				>
+					<el-form-item label="证书名称" prop="certname">
+						<el-input v-model="certificato.certname"></el-input>
+					</el-form-item>
+					<el-form-item label="证书编号" prop="certid">
+						<el-input v-model="certificato.certid"></el-input>
+					</el-form-item>
+					<el-form-item label="注册日期" prop="registrydate">
+						<el-date-picker
+							v-model="certificato.registrydate"
+							type="date"
+							placeholder="注册日期"
+							style="width: 100%"
+							value-format="YYYY-MM-DD"
+						>
+						</el-date-picker>
+					</el-form-item>
+					<el-form-item label="启用日期" prop="applydate">
+						<el-date-picker
+							v-model="certificato.applydate"
+							type="date"
+							placeholder="启用日期"
+							style="width: 100%"
+							value-format="YYYY-MM-DD"
+						>
+						</el-date-picker>
+					</el-form-item>
+					<el-form-item label="失效日期">
+						<el-date-picker
+							v-model="certificato.loseefficacydate"
+							type="date"
+							placeholder="失效日期"
+							style="width: 100%"
+							value-format="YYYY-MM-DD"
+						>
+						</el-date-picker>
+					</el-form-item>
+					<el-form-item label="启用状态" prop="status">
+						<el-select
+							v-model="certificato.status"
+							placeholder="请选择启用状态"
+							style="width: 100%"
+						>
+							<el-option
+								v-for="item in cerStatus"
+								:key="item.value"
+								:value="item.value"
+								:label="item.title"
+							>
+							</el-option>
+						</el-select>
+					</el-form-item>
+					<el-form-item>
+						<div style="text-align: center">
+							<el-button type="primary" @click="addCertificate">新增</el-button>
+							<el-button @click="showAddCert = false">取消</el-button>
+						</div>
+					</el-form-item>
+				</el-form>
+			</div>
+		</el-dialog>
 	</div>
 </template>
 
@@ -285,6 +359,31 @@ export default defineComponent({
 		const addempFrom = ref(null);
 		const employese = reactive([]);
 		const showModifyemp = ref(false);
+
+		//证书模型
+		const showAddCert = ref(false);
+		const certificato = reactive({
+			id: "",
+			certname: "",
+			certid: "",
+			registrydate: "",
+			applydate: "",
+			loseefficacydate: "",
+			empid: "",
+			status: "",
+		});
+		const cerStatus = reactive([
+			{
+				title: "启用",
+				value: 0,
+			},
+			{
+				title: "停用",
+				value: 1,
+			},
+		]);
+		const certificates = ref(null); //证书表单
+
 		//公司信息
 		const companysinfo = [
 			{
@@ -297,7 +396,9 @@ export default defineComponent({
 			},
 		];
 		//搜索员工信息
-		const searchEmp = () => {};
+		const searchEmp = () => {
+			getEmpInfos(cutPage.current, cutPage.size, searchKeyWord.seCompany, searchKeyWord.seName);
+		};
 		//新增员工按钮事件
 		const openAddemp = () => {
 			showAddemp.value = true;
@@ -305,31 +406,41 @@ export default defineComponent({
 				addempFrom.value.resetFields();
 			}
 		};
-		//获取员工信息列表
-		const getEmpInfos = (current, size) => {
+
+		//获取员工信息条数
+		const getEmpCount = (company = "") => {
+			request
+				.get("/emp/count", { params: { company: company } })
+				.then(res => (cutPage.count = res.data));
+		};
+
+		//综合获取员工信息列表
+		const getEmpInfos = (current, size, company = "", empName = "") => {
 			employese.length = 0;
-			request.get("/emp/list", { params: { current: current, size: size } }).then(res => {
-				res.data.forEach(element => {
-					element.entryday = datefmt(element.entryday);
-					if (element.outday == "" || !element.outday) {
-						element.outday = "无";
-					} else {
-						element.outday = datefmt(element.outday);
-					}
-					if (element.status == 0) {
-						element.status = "内部员工";
-					} else {
-						element.status = "外部员工";
-					}
-					employese.push(element);
+			getEmpCount(company);
+			request
+				.get("/emp/list", {
+					params: { current: current, size: size, company: company, empName: empName },
+				})
+				.then(res => {
+					res.data.forEach(element => {
+						element.entryday = datefmt(element.entryday);
+						if (element.outday == "" || !element.outday) {
+							element.outday = "无";
+						} else {
+							element.outday = datefmt(element.outday);
+						}
+						if (element.status == 0) {
+							element.status = "内部员工";
+						} else {
+							element.status = "外部员工";
+						}
+						employese.push(element);
+					});
 				});
-			});
 		};
 		//页面挂在前初始化员工数据
 		onBeforeMount(() => {
-			request.get("/emp/count").then(res => {
-				cutPage.count = res.data;
-			});
 			getEmpInfos(cutPage.current, cutPage.size);
 		});
 		// 新增员工
@@ -386,17 +497,43 @@ export default defineComponent({
 		};
 		//分页按钮事件
 		const currentQuery = current => {
-			cutPage.current = current;
-			getEmpInfos(cutPage.current, cutPage.size);
-		};
+			console.log(current);
 
+			cutPage.current = current;
+			getEmpInfos(cutPage.current, cutPage.size, searchKeyWord.seCompany, searchKeyWord.seName);
+		};
 		//修改员工事件
 		const modifyemp = () => {
-			
+			request.post("/emp/modify", employe).then(res => {
+				if (res.data) {
+					ElMessage.success("员工信息修改成功");
+					getEmpInfos(cutPage.current, cutPage.size);
+					showModifyemp.value = false;
+				} else {
+					ElMessage.error("员工信息修改失败,请检查数据!");
+					return false;
+				}
+			});
 		};
-		
-	//新增员工证书
-		const addCertificate=(index,row) => {}
+		//新增员工证书按钮事件
+		const addButtonCertificate = (index, row) => {
+			showAddCert.value = true;
+			if (certificates.value) {
+				certificates.value.resetFields();
+			}
+			certificato.empid = row.id;
+		};
+		//新增员工证书事件
+		const addCertificate = () => {
+			request.post("/certificates/add", certificato).then(res => {
+				if (res.data) {
+					ElMessage.success("证书添加成功");
+					showAddCert.value = false;
+				} else {
+					ElMessage.warning("证书添加失败");
+				}
+			});
+		};
 
 		//#region 表单数据校验
 		// 身份证号码校验
@@ -417,8 +554,7 @@ export default defineComponent({
 			});
 			callback();
 		};
-
-		const rules = {
+		const empRules = {
 			name: {
 				required: true,
 				message: "请输入员工姓名",
@@ -450,6 +586,51 @@ export default defineComponent({
 				trgger: "change",
 			},
 		};
+
+		//证书编号验证校验
+		const validateCertid = (rule, value, callback) => {
+			if (value == "" || value == null) {
+				callback(new Error("请输入证书编号!"));
+				return false;
+			}
+			request.get("/certificates/ckcertid", { params: { certid: value } }).then(res => {
+				if (res.data) {
+					callback(new Error("证书编号已存在,请检查!"));
+				} else {
+					callback();
+				}
+			});
+		};
+
+		const cerRules = {
+			certname: {
+				required: true,
+				message: "请输入证书名称",
+				trigger: "blur",
+			},
+			certid: {
+				required: true,
+				validator: validateCertid,
+				trigger: "blur",
+			},
+			registrydate: {
+				required: true,
+				message: "请输入证书注册日期",
+				trigger: "blur",
+			},
+			applydate: {
+				required: true,
+				message: "请输入证书启用日期",
+				trigger: "blur",
+			},
+			status: {
+				required: true,
+				message: "请输入证书使用状态",
+				trigger: "change",
+			},
+		};
+
+		//证书编号校验
 		//#endregion
 
 		return {
@@ -458,11 +639,16 @@ export default defineComponent({
 			searchKeyWord,
 			cutPage,
 			addempFrom,
-			rules,
+			empRules,
 			statues,
 			showAddemp,
 			companysinfo,
 			showModifyemp,
+			certificato,
+			showAddCert,
+			cerStatus,
+			certificates,
+			cerRules,
 
 			currentQuery,
 			addemp,
@@ -471,7 +657,8 @@ export default defineComponent({
 			openAddemp,
 			searchEmp,
 			modifyemp,
-			addCertificate
+			addCertificate,
+			addButtonCertificate,
 		};
 	},
 });
