@@ -44,7 +44,7 @@
 			<!-- 数据表格区域 -->
 			<div>
 				<el-table :data="employese" style="width: 100%" empty-text="无">
-					<el-table-column label="员工姓名" prop="name"> </el-table-column>
+					<el-table-column label="员工姓名" prop="empname"> </el-table-column>
 					<el-table-column label="身份证号" prop="sid"> </el-table-column>
 					<el-table-column label="联系电话" prop="phonenum"> </el-table-column>
 					<el-table-column label="所属公司" prop="company"> </el-table-column>
@@ -325,7 +325,7 @@ export default defineComponent({
 		//员工数据模型
 		const employe = reactive({
 			id: "",
-			name: "",
+			empname: "",
 			sid: "",
 			status: "",
 			phonenum: "",
@@ -371,6 +371,7 @@ export default defineComponent({
 			loseefficacydate: "",
 			empid: "",
 			status: "",
+			empname: "",
 		});
 		const cerStatus = reactive([
 			{
@@ -522,6 +523,7 @@ export default defineComponent({
 				certificates.value.resetFields();
 			}
 			certificato.empid = row.id;
+			certificato.empname = row.name;
 		};
 		//新增员工证书事件
 		const addCertificate = () => {
