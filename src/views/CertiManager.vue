@@ -80,80 +80,66 @@
 			</div>
 		</div>
 		<!-- 修改证书区域 -->
-		<el-dialog title="修改员工信息" center v-model="showModify" width="40%">
+		<el-dialog title="修改证书信息" center v-model="showModify" width="40%">
 			<div class="add-emp-form">
 				<el-form
+					:rules="certRules"
 					:model="certificator"
 					label-width="80px"
 					:inline="false"
 					size="small"
 					ref="modifyCerForm"
-				>
-					<el-form-item label="证书编号">
+					><el-form-item label="证书名称">
+						<el-input v-model="certificator.certname"></el-input>
+					</el-form-item>
+					<el-form-item label="证书编号" prop="certid">
 						<el-input v-model="certificator.certid"></el-input>
 					</el-form-item>
-					<el-form-item label="身份证号" prop="sid">
-						<el-input
-							v-model="employe.sid"
-							maxlength="18"
-							minlength="16"
-							show-word-limit
-						></el-input>
+					<el-form-item label="注册日期">
+						<el-date-picker
+							v-model="certificator.registrydate"
+							type="date"
+							placeholder="注册日期"
+							style="width: 100%"
+							value-format="YYYY-MM-DD"
+						>
+						</el-date-picker>
 					</el-form-item>
-					<el-form-item label="联系电话" prop="phonenum">
-						<el-input
-							v-model="employe.phonenum"
-							maxlength="11"
-							minlength="11"
-							show-word-limit
-						></el-input>
+					<el-form-item label="启用日期">
+						<el-date-picker
+							v-model="certificator.applydate"
+							type="date"
+							placeholder="启用日期"
+							style="width: 100%"
+							value-format="YYYY-MM-DD"
+						>
+						</el-date-picker>
 					</el-form-item>
-					<el-form-item label="所属公司" prop="company">
-						<el-select v-model="employe.company" placeholder="请选择所属公司" style="width: 100%">
-							<el-option
-								v-for="item in companysinfo"
-								:key="item.value"
-								:value="item.value"
-								:label="item.company"
-							>
-							</el-option>
-						</el-select>
+					<el-form-item label="失效日期">
+						<el-date-picker
+							v-model="certificator.loseefficacydate"
+							type="date"
+							placeholder="失效日期"
+							style="width: 100%"
+							value-format="YYYY-MM-DD"
+						>
+						</el-date-picker>
 					</el-form-item>
-					<el-form-item label="员工性质" prop="status">
-						<el-select v-model="employe.status" placeholder="请选择员工性质" style="width: 100%">
+					<el-form-item label="证书状态">
+						<el-select v-model="certificator.status" placeholder="证书状态" clearable filterable>
 							<el-option
 								v-for="item in statues"
 								:key="item.value"
-								:value="item.value"
 								:label="item.title"
+								:value="item.value"
 							>
 							</el-option>
 						</el-select>
 					</el-form-item>
-					<el-form-item label="离职日期">
-						<el-date-picker
-							v-model="employe.outDay"
-							type="date"
-							placeholder="入职日期"
-							style="width: 100%"
-							value-format="YYYY-MM-DD"
-						>
-						</el-date-picker>
-					</el-form-item>
-					<el-form-item label="入职日期">
-						<el-date-picker
-							v-model="employe.entryday"
-							type="date"
-							placeholder="入职日期"
-							style="width: 100%"
-							value-format="YYYY-MM-DD"
-						>
-						</el-date-picker>
-					</el-form-item>
 					<el-form-item>
 						<div style="text-align: center">
-							<el-button type="primary" @click="modifyemp">修改</el-button>
-							<el-button @click="showModifyemp = false">取消</el-button>
+							<el-button type="primary" @click="modifyCert">修改</el-button>
+							<el-button @click="showModify = false">取消</el-button>
 						</div>
 					</el-form-item>
 				</el-form>
@@ -204,7 +190,16 @@ export default defineComponent({
 		});
 		const showModify = ref(false);
 		const modifyCerForm = ref(null);
-
+		const statues = reactive([
+			{
+				title: "启用",
+				value: 0,
+			},
+			{
+				title: "停用",
+				value: 1,
+			},
+		]);
 		const certificatoes = reactive([]);
 		//分页根据条件获取全部证书信息
 		const getCerts = (current, size, empName, company) => {
@@ -267,13 +262,55 @@ export default defineComponent({
 			if (modifyCerForm.value != null) {
 				modifyCerForm.value.resetFields();
 			}
-			d
+
+			certificator.id = row.id;
+			certificator.certid = row.certid;
+			certificator.certname = row.certname;
+			certificator.empid = row.empid;
+			showModify.value = true;
 		};
 
 		//分页查询按钮事件
 		const currentQuery = current => {
 			cutPage.current = current;
 			getCerts(cutPage.current, cutPage.size, searchCert.seKey, searchCert.seCompany);
+		};
+
+		//修改证书确定按钮事件
+		const modifyCert = () => {
+			request.post("/certificates/modify", certificator).then(res => {
+				if (res.data) {
+					ElMessage.success("证书修改成功");
+					showModify.value = false;
+					getCerts(cutPage.current, cutPage.size, searchCert.seKey, searchCert.seCompany);
+				} else {
+					ElMessage.error("证书修改失败");
+				}
+			});
+		};
+
+		/* 表单数据校验 */
+		//证书编号验证
+		const validateCertid = (rule, value, callback) => {
+			if (value == "" || value == null) {
+				callback(new Error("请输入证书编号!"));
+				return false;
+			}
+			request.get("/certificates/ckcertid", { params: { certid: value } }).then(res => {
+				if (res.data) {
+					callback(new Error("证书编号已存在,请检查!"));
+				} else {
+					callback();
+				}
+			});
+		};
+
+		const certRules = {
+			certid: {
+				required: true,
+				validator: validateCertid,
+				trigger: "change",
+			},
 		};
 
 		onBeforeMount(() => {
@@ -287,7 +324,11 @@ export default defineComponent({
 			cutPage,
 			showModify,
 			modifyCerForm,
+			statues,
+			certificator,
 
+			certRules,
+			modifyCert,
 			seCer,
 			handleDelete,
 			currentQuery,

@@ -54,7 +54,7 @@ export default defineComponent({
 			{
 				icon: "el-icon-suitcase",
 				title: "项目管理",
-				index: "#4",
+				index: "/promg",
 				role: 1,
 			},
 			{

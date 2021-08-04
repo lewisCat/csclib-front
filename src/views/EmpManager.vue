@@ -672,7 +672,7 @@ export default defineComponent({
 	gap: 10px;
 }
 
-.add-emp-form {
+.add-emp-form {p
 	padding: 0 auto;
 }
 </style>

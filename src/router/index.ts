@@ -29,9 +29,15 @@ const routes: Array<RouteRecordRaw> = [
 			},
 			{
 				path: "/empmg",
-				name: "EmpManager",
+				name: "EmpManage",
 				meta: { title: "员工管理" },
 				component: () => import("../views/EmpManager.vue"),
+			},
+			{
+				path: "/promg",
+				name: "ProjectManage",
+				meta: { title: "项目管理" },
+				component: () => import("../views/ProjectManage.vue"),
 			},
 		],
 	},
